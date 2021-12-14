@@ -2,13 +2,18 @@ import { useState, useEffect } from "react";
 import { firebase } from "../firebase";
 import {collatedTasksExits} from '../helpers'
 import moment from "moment";
+import {useSelector, useDispatch, } from 'react-redux'
+import { setProject, setTask, setArchivedTasks } from "../action";
+
 
 export const useTasks = (selectedproject) => {
-    const [tasks, setTask] = useState([]);
-    const [archivedTasks, setArchivedTasks] = useState([]);
+    const tasks = useSelector((state)=> state.userTasks.tasks)
+    const archivedTasks = useSelector((state)=> state.userArchivedTasks.archivedTasks)
+    const dispatch = useDispatch()
 
     useEffect(()=>{
-        let unsubscirbe = firebase.firestore()
+        let unsubscirbe = firebase
+        .firestore()
         .collection('tasks')
         .where('userId' , '==', "vijay123");
 
@@ -27,7 +32,7 @@ export const useTasks = (selectedproject) => {
                     ...task.data(),
                 }));
 
-                setTask(
+                dispatch(setTask(
                     selectedproject === 'NEXT_7'
                     ? newTasks.filter(
                         task => 
@@ -35,8 +40,8 @@ export const useTasks = (selectedproject) => {
                         task.archived !== true
                     )
                     : newTasks.filter(task => task.archived !== true)
-                );     
-                setArchivedTasks(newTasks.filter(task => task.archived !== false))
+                ));     
+                dispatch(setArchivedTasks(newTasks.filter(task => task.archived !== false)))
             });
             return () => unsubscirbe()
     },[selectedproject]);
@@ -44,9 +49,9 @@ export const useTasks = (selectedproject) => {
     return {tasks, archivedTasks}
 };
 
-
 export const useProjects = () => {
-    const [projects, setProjects]= useState(null)
+    const selector = useSelector((state)=> state.userProject.projects)
+     const dispatch = useDispatch()
 
     useEffect(() => {
         firebase 
@@ -60,11 +65,11 @@ export const useProjects = () => {
                 ...project.data(),
                 docId: project.id,
             }));
-            if(JSON.stringify(allProjects) !== JSON.stringify(projects)){
-                setProjects(allProjects)
+            if(JSON.stringify(allProjects) !== JSON.stringify(selector)){
+                dispatch(setProject(allProjects))
             }
         });    
-    },[projects])
+    },[selector])
 
-    return { projects, setProjects };
+    return { selector };
 };

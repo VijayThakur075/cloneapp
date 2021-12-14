@@ -1,5 +1,11 @@
 import React from 'react'
 import {FaPizzaSlice} from 'react-icons/fa'
+import { Navbar, Nav, Containr } from 'react-bootstrap';
+import { Form, Modal, Button } from 'react-bootstrap';
+import {useSelector, useDispatch} from 'react-redux'
+import { FormControl, InputGroup } from 'react-bootstrap';
+import { firebase } from '../../firebase';
+
 
 export default function Header() {
     const x=1;

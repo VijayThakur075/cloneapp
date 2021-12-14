@@ -5,8 +5,15 @@ import {
     FaRegCalendar,
     FaCalendarAlt
 } from 'react-icons/fa'
+import { useSelectedProjectValue } from '../../context'
+import {useSelector} from 'react-redux'
+import { Projects } from '../Projects'
+
 
 export const Sidebar = () => {
+    const showProjects= useSelector(state=> state.userShowProject.showProjects)
+    const {selectedProject}= useSelectedProjectValue;
+
     return (
         <div className="sidebar" data-testid="sidebar">
             <ul className="sidebar__generi">
@@ -35,8 +42,8 @@ export const Sidebar = () => {
                 </span>
                 <h2>projects</h2>
             </div>
-            <ul className="sidebar__projects">projects will be here!</ul>
-            Add Project Component Here!!!!!!!!!!!!!!
+            <ul className="sidebar__projects">{showProjects && <Projects />}projects will be here!</ul>
+           {showProjects && <Projects />}
         </div>
     )
 }
